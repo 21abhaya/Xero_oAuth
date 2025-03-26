@@ -148,3 +148,7 @@ MEDIA_URL = "/media/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# XERO LOGIN
+XERO_CLIENT_ID = env("XERO_CLIENT_ID")
+XERO_CLIENT_SECRET = env("XERO_CLIENT_SECRET")
