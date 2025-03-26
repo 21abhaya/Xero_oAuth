@@ -97,6 +97,7 @@ DATABASES = {
     }
 }
 
+
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
 
