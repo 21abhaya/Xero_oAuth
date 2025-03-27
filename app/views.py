@@ -4,10 +4,10 @@ from xero_oauth.settings import XERO_CLIENT_ID, XERO_CLIENT_SECRET, XERO_ENDPOIN
 from xero_python.api_client import ApiClient, serialize
 from xero_python.api_client.configuration import Configuration
 from xero_python.api_client.oauth2 import OAuth2Token
+
 from authlib.integrations.django_client import OAuth
 
-# Create your views here.
-
+# configure xero-python sdk client
 api_client = ApiClient(
     Configuration(
         debug=True,
@@ -18,7 +18,8 @@ api_client = ApiClient(
     ),
 )
 
-oauth = OAuth(
+# configure oauth django-client application
+oauth = OAuth.register(
     name="xero",
     version="2",
     client_id=XERO_CLIENT_ID,
@@ -53,3 +54,24 @@ def xero_token_required(function):
     
     return decorator
 
+def login(request):
+    if not obtain_xero_oauth2_token():
+        response = xero.authorize_redirect(request, redirect_url="http://localhost:8000/callback")
+        return response
+    return redirect("home")
+
+def logout(request):
+    store_xero_oauth2_token(None)
+    return redirect("login")
+
+def oauth_callback(request):
+    try:
+        response = xero.authorize_access_token(request)
+    except Exception as e:
+        print(e)
+        raise
+    if response is None or response.get("access_token") is None:
+        return "Access denied: response=%s" % response
+    print(response)
+    store_xero_oauth2_token(response)
+    return redirect("home")
