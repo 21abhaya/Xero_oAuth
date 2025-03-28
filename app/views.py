@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.http import HttpResponse
 
 from xero_oauth.settings import XERO_CLIENT_ID, XERO_CLIENT_SECRET, XERO_ENDPOINT_URL, XERO_AUTHORIZATION_URL,XERO_ACCESS_TOKEN_URL, XERO_REFRESH_TOKEN_URL
 from xero_python.api_client import ApiClient, serialize
@@ -19,9 +20,9 @@ api_client = ApiClient(
 )
 
 # configure oauth django-client application
-oauth = OAuth.register(
-    name="xero",
-    version="2",
+oauth = OAuth()
+oauth = oauth.register(
+    name="Xero",
     client_id=XERO_CLIENT_ID,
     client_secret=XERO_CLIENT_SECRET,
     endpoint_url=XERO_ENDPOINT_URL,
@@ -34,17 +35,23 @@ token_details = {'token': None,
                  'modified': True}
 
 @api_client.oauth2_token_getter
-def obtain_xero_oauth2_token():
+def get_xero_oauth2_token():
     return token_details["token"]
 
 @api_client.oauth2_token_saver
-def obtain_xero_oauth2_token(token):
+def save_xero_oauth2_token(token):
     token_details["token"] = token
     token_details['modified'] = True
 
+@api_client.oauth2_token_getter
+def store_xero_oauth2_token(token):
+    token_details["token"] = token
+    token_details['modified'] = True
+    
+
 def xero_token_required(function):
     def decorator(*args, **kwargs):
-        xero_token = obtain_xero_oauth2_token()
+        xero_token = get_xero_oauth2_token()
         if not xero_token:
             print(xero_token)
             print("Re Login")
@@ -55,8 +62,8 @@ def xero_token_required(function):
     return decorator
 
 def login(request):
-    if not obtain_xero_oauth2_token():
-        response = xero.authorize_redirect(request, redirect_url="http://localhost:8000/callback")
+    if not get_xero_oauth2_token():
+        response = oauth.authorize_redirect(request, redirect_url="http://localhost:8000/callback")
         return response
     return redirect("home")
 
@@ -66,7 +73,7 @@ def logout(request):
 
 def oauth_callback(request):
     try:
-        response = xero.authorize_access_token(request)
+        response = oauth.authorize_access_token(request)
     except Exception as e:
         print(e)
         raise
@@ -75,3 +82,6 @@ def oauth_callback(request):
     print(response)
     store_xero_oauth2_token(response)
     return redirect("home")
+
+def homepage(request):
+    return HttpResponse("Hello, world. You're at the home page.")

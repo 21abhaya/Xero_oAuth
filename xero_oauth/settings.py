@@ -42,7 +42,6 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
-    'allauth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -156,6 +155,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 XERO_CLIENT_ID = env("XERO_CLIENT_ID")
 XERO_CLIENT_SECRET = env("XERO_CLIENT_SECRET")
 
+XERO_CALLBACK_URI=env("XERO_CALLBACK_URI")
 XERO_ENDPOINT_URL=env("XERO_ENDPOINT_URL")
 XERO_AUTHORIZATION_URL=env("XERO_AUTHORIZATION_URL")
 XERO_ACCESS_TOKEN_URL=env("XERO_ACCESS_TOKEN_URL")
