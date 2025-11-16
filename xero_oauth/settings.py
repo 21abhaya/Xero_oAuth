@@ -14,7 +14,6 @@ from pathlib import Path
 
 import environ
 
-import os
 
 env = environ.Env()
 
@@ -89,12 +88,12 @@ DATABASES = {
     #     'NAME': BASE_DIR / 'db.sqlite3',
     # }
     "default": {
-        "ENGINE": env.str("DB_ENGINE"),
-        "NAME": env.str("DB_NAME"),
-        "USER": env.str("DB_USER"),
-        "PASSWORD": env.str("DB_PASSWORD"),  # Set your MySQL password here if needed
-        "HOST": env.str("DB_HOST"),
-        "PORT": env.str("DB_PORT"),
+        "ENGINE": env("DB_ENGINE"),
+        "NAME": env("DB_NAME"),
+        "USER": env("DB_USER"),
+        "PASSWORD": env("DB_PASSWORD"),  # Set your MySQL password here if needed
+        "HOST": env("DB_HOST"),
+        "PORT": env("DB_PORT"),
     }
 }
 
