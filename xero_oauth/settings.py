@@ -160,3 +160,13 @@ XERO_ENDPOINT_URL=env("XERO_ENDPOINT_URL")
 XERO_AUTHORIZATION_URL=env("XERO_AUTHORIZATION_URL")
 XERO_ACCESS_TOKEN_URL=env("XERO_ACCESS_TOKEN_URL")
 XERO_REFRESH_TOKEN_URL=env("XERO_REFRESH_TOKEN_URL")
+
+
+# Jazzmin Settings
+
+JAZZMIN_SETTINGS = {
+    "site_title": "Xero OAuth Admin",
+    "site_header": "Xero OAuth",
+    "site_brand": "Xero OAuth",
+    "welcome_sign": "Welcome to Xero OAuth Admin",
+}
