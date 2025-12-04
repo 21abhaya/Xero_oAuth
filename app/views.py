@@ -1,17 +1,8 @@
 import requests
 
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.conf import settings
-
-def homepage(request):
-    return render(request, 'base.html')
-
-def callback(request):
-    return f"Callback received with params:{request.GET.dict()}"
-
-def login_view(request):
-    return render(request, 'login.html')
-
 
 # testing out xero oauth2 
 response_type="code"
@@ -30,5 +21,23 @@ def xero_authorization_request():
             "scope": scope 
         },
     )
+    print("Response URI:", response.url)
+    return response
     
-    print("Test Xero Authorization Response:", response)
+def authorization_test_view(request):
+    response = xero_authorization_request()
+    return HttpResponseRedirect(response.url)
+    
+def homepage(request):
+    return render(request, 'base.html')
+
+def callback(request):
+    response = request.GET.dict()
+    print("Callback Response:", response)
+    return HttpResponse("Callback received. You can now exchange the code for tokens.")
+
+# def login_view(request):
+#     if request.method == "GET":
+#         response = xero_authorization_request()
+#         return HttpResponseRedirect(response.url) 
+#     return render(request, 'login.html')
