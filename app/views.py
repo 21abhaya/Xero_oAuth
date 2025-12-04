@@ -33,11 +33,8 @@ def homepage(request):
 
 def callback(request):
     response = request.GET.dict()
+    code = response.get("code")
+    state = response.get("session_state")
     print("Callback Response:", response)
     return HttpResponse("Callback received. You can now exchange the code for tokens.")
 
-# def login_view(request):
-#     if request.method == "GET":
-#         response = xero_authorization_request()
-#         return HttpResponseRedirect(response.url) 
-#     return render(request, 'login.html')
