@@ -1,46 +1,32 @@
 import requests
 
-from django.http import HttpResponseRedirect, HttpResponse
+from base64 import b64encode
+
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import render
-from django.conf import settings
 
-# testing out xero oauth2 
-response_type="code"
-client_id=settings.XERO_CLIENT_ID
-redirect_uri=settings.XERO_CALLBACK_URI
-scope="openid profile email"
-authorization_url=settings.XERO_AUTHORIZATION_URL
-
-def xero_authorization_request():
-    response = requests.get(
-        authorization_url, 
-        params={
-            "response_type": response_type,
-            "client_id": client_id,
-            "redirect_uri": redirect_uri,
-            "scope": scope 
-        },
-    )
-    print("Response URI:", response.url)
-    return response
-
-# TODO
-# def xero_obtain_access_token(code):
-#     url = settings.XERO_ACCESS_TOKEN_URL
-    
+from .xero_auth import (
+    make_xero_authorization_request,
+    xero_obtain_access_token
+)    
         
 def authorization_test_view(request):
-    response = xero_authorization_request()
+    response = make_xero_authorization_request()
     print("Redirecting to:", response.url)
     return HttpResponseRedirect(response.url)
     
-def homepage(request):
-    return render(request, 'base.html')
 
 def callback(request):
     response = request.GET.dict()
-    code = response.get("code")
-    state = response.get("session_state")
     print("Callback Response:", response)
+    code = response.get("code")
+    if code:
+        print("Authorization Code:", code)
+        obtained_token = xero_obtain_access_token(code)
+        print("Obtained Token Response Header:", obtained_token.content)
+        return HttpResponse(f"Access Token Response: {obtained_token.json()}")
     return HttpResponse("Callback received. You can now exchange the code for tokens.")
 
+
+def homepage(request):
+    return render(request, 'base.html')
