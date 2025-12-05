@@ -26,6 +26,7 @@ def xero_authorization_request():
     
 def authorization_test_view(request):
     response = xero_authorization_request()
+    print("Redirecting to:", response.url)
     return HttpResponseRedirect(response.url)
     
 def homepage(request):
