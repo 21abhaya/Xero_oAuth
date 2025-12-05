@@ -23,7 +23,12 @@ def xero_authorization_request():
     )
     print("Response URI:", response.url)
     return response
+
+# TODO
+# def xero_obtain_access_token(code):
+#     url = settings.XERO_ACCESS_TOKEN_URL
     
+        
 def authorization_test_view(request):
     response = xero_authorization_request()
     print("Redirecting to:", response.url)
