@@ -30,13 +30,11 @@ def make_xero_authorization_request():
 def xero_obtain_access_token(authorization_code):
     
     url = settings.XERO_ACCESS_TOKEN_URL
-    encoded_client_id = b64encode(client_id.encode('utf-8'))
-    print(type(encoded_client_id))
-    encoded_client_secret = b64encode(client_secret.encode('utf-8'))
-    print(type(encoded_client_secret))
+    credentials = f"{client_id}:{client_secret}"
+    encoded_credentials = b64encode(credentials.encode('utf-8')).decode('utf-8')    
     
     headers = {
-        "authorization": "Basic " + encoded_client_id.decode('utf-8') + ":" + encoded_client_secret.decode('utf-8'),
+        "authorization": f"Basic {encoded_credentials}",
         "Content-Type": "application/x-www-form-urlencoded"
     }
     data = {
@@ -50,4 +48,5 @@ def xero_obtain_access_token(authorization_code):
         headers=headers,
         data=data
     )
+    print("request headers:", response.request.headers)
     return response 

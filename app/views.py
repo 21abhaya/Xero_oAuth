@@ -22,9 +22,10 @@ def callback(request):
     code = response.get("code")
     if code:
         print("Authorization Code:", code)
-        obtained_token = xero_obtain_access_token(code)
-        print("Obtained Token Response Header:", obtained_token.content)
-        return HttpResponse(f"Access Token Response: {obtained_token.json()}")
+        response = xero_obtain_access_token(code)
+        print("Obtained Token Response Header:", response.content)
+        token = response.json()
+        return HttpResponse("Access Token obtained successfully.")
     return HttpResponse("Callback received. You can now exchange the code for tokens.")
 
 
