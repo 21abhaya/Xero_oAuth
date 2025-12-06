@@ -24,7 +24,7 @@ def callback(request):
             response = xero_obtain_access_token(code)
         
             if response.status_code != 200:
-                return HttpResponse("Failed to obtain access token.", status=500)
+                return HttpResponse("Failed to obtain access token.", status=response.status_code)
         
             access_token = response.json().get("access_token")
             token_type = response.json().get("token_type")
@@ -35,11 +35,7 @@ def callback(request):
                 return HttpResponse("Invalid token type received.", status=500)
             
             test_connections = test_xero_connections(access_token)
-            
-            if test_connections.status_code != 200:
-                return HttpResponse("Failed to fect any Xero Connections", status=500)
-            
-            return HttpResponse(test_connections, status=200)
+            return test_connections
         
         return HttpResponse("Callback received. You can now exchange the code for tokens.", status=200)
 

@@ -26,6 +26,10 @@ def make_xero_authorization_request():
                 "scope": scope 
             },
         )
+        
+        if response.status_code != 200:
+            return HttpResponse("Failed to make authorization request.", status=response.status_code)
+        #TODO: Look into this, what should be the correct response here?
         return response
 
     except requests.RequestException as e:
@@ -53,7 +57,10 @@ def xero_obtain_access_token(authorization_code):
             headers=headers,
             data=data
         )
-        print("request headers:", response.request.headers)
+        
+        if response.status_code != 200:
+            return HttpResponse("Failed to obtain access token.", status=response.status_code)
+        
         return response 
     
     except requests.RequestException as e:
@@ -74,7 +81,11 @@ def test_xero_connections(access_token):
             url,
             headers=headers
         )
-        return JsonResponse(response.json(), status=200)
+        
+        if response.status_code != 200:
+            return HttpResponse("Failed to fetch any Xero Connections", status=response.status_code)
+        
+        return JsonResponse(response.json())
     
     except requests.RequestException as e:
         return HttpResponse(f"Error fetching Xero connections: {e}" )
