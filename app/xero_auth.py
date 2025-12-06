@@ -2,6 +2,7 @@ import requests
 
 from base64 import b64encode
 
+from django.http import HttpResponse
 from django.conf import settings
 
 
@@ -15,17 +16,20 @@ authorization_url=settings.XERO_AUTHORIZATION_URL
 
 
 def make_xero_authorization_request():    
-    response = requests.get(
-        authorization_url, 
-        params={
-            "response_type": response_type,
-            "client_id": client_id,
-            "redirect_uri": redirect_uri,
-            "scope": scope 
-        },
-    )
-    return response
+    try:
+        response = requests.get(
+            authorization_url, 
+            params={
+                "response_type": response_type,
+                "client_id": client_id,
+                "redirect_uri": redirect_uri,
+                "scope": scope 
+            },
+        )
+        return response
 
+    except requests.RequestException as e:
+        return HttpResponse("Error making authorization request:" + str(e))
 
 def xero_obtain_access_token(authorization_code):
     
@@ -43,10 +47,15 @@ def xero_obtain_access_token(authorization_code):
         "redirect_uri": redirect_uri
     }
     
-    response = requests.post(
-        url,
-        headers=headers,
-        data=data
-    )
-    print("request headers:", response.request.headers)
-    return response 
+    try: 
+        response = requests.post(
+            url,
+            headers=headers,
+            data=data
+        )
+        print("request headers:", response.request.headers)
+        return response 
+    
+    except requests.RequestException as e:
+        print("Error obtaining access token:", e)
+        return HttpResponse("Error obtaining access token:" + str(e))

@@ -1,7 +1,3 @@
-import requests
-
-from base64 import b64encode
-
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import render
 
@@ -12,6 +8,8 @@ from .xero_auth import (
         
 def authorization_test_view(request):
     response = make_xero_authorization_request()
+    if response.status_code != 200:
+        return HttpResponse("Failed to make authorization request.", status=500)
     print("Redirecting to:", response.url)
     return HttpResponseRedirect(response.url)
     
@@ -20,13 +18,17 @@ def callback(request):
     response = request.GET.dict()
     print("Callback Response:", response)
     code = response.get("code")
+    
     if code:
-        print("Authorization Code:", code)
         response = xero_obtain_access_token(code)
-        print("Obtained Token Response Header:", response.content)
+       
+        if response.status_code != 200:
+            return HttpResponse("Failed to obtain access token.", status=500)
+       
         token = response.json()
-        return HttpResponse("Access Token obtained successfully.")
-    return HttpResponse("Callback received. You can now exchange the code for tokens.")
+        return HttpResponse(f"Access Token obtained successfully: {token}")
+    
+    return HttpResponse("Callback received. You can now exchange the code for tokens.", status=200)
 
 
 def homepage(request):
