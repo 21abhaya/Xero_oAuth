@@ -8,8 +8,10 @@ from .xero_auth import (
         
 def authorization_test_view(request):
     response = make_xero_authorization_request()
+    
     if response.status_code != 200:
         return HttpResponse("Failed to make authorization request.", status=500)
+    
     print("Redirecting to:", response.url)
     return HttpResponseRedirect(response.url)
     
