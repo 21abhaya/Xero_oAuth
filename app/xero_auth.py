@@ -2,18 +2,18 @@ import requests
 
 from base64 import b64encode
 
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.conf import settings
 
 
 # testing out xero oauth2 
 response_type="code"
+scope="openid profile email"
 client_id=settings.XERO_CLIENT_ID
 client_secret=settings.XERO_CLIENT_SECRET
 redirect_uri=settings.XERO_CALLBACK_URI
-scope="openid profile email"
 authorization_url=settings.XERO_AUTHORIZATION_URL
-
+xero_connections_url=settings.XERO_CONNECTION_URL
 
 def make_xero_authorization_request():    
     try:
@@ -59,3 +59,22 @@ def xero_obtain_access_token(authorization_code):
     except requests.RequestException as e:
         print("Error obtaining access token:", e)
         return HttpResponse("Error obtaining access token:" + str(e))
+    
+
+def test_xero_connections(access_token):
+    
+    url = xero_connections_url
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json"
+    }
+    
+    try:
+        response = requests.get(
+            url,
+            headers=headers
+        )
+        return JsonResponse(response.json(), status=200)
+    
+    except requests.RequestException as e:
+        return HttpResponse(f"Error fetching Xero connections: {e}" )
