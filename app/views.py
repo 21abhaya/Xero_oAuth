@@ -18,6 +18,7 @@ def authorization_test_view(request):
     
 
 def callback(request):
+    #TODO: Needs refactoring here, verify request first. what if the response is not a dictionary?
     response = request.GET.dict()
     code = response.get("code")
     
