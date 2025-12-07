@@ -1,11 +1,161 @@
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>Test App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #1a1a1a;
+            font-family: 'Comic Neue', cursive;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .halftone {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background-image: radial-gradient(#444 1px, transparent 1px);
+            background-size: 8px 8px;
+            opacity: 0.2;
+            z-index: 0;
+        }
+
+        .corner-burst {
+            position: fixed;
+            font-family: 'Bangers', cursive;
+            font-size: 2rem;
+            color: #ff6b35;
+            text-shadow: 3px 3px 0 #000;
+            z-index: 1;
+        }
+
+        .corner-burst.top-left {
+            top: 2rem;
+            left: 2rem;
+            transform: rotate(-15deg);
+        }
+
+        .corner-burst.bottom-right {
+            bottom: 2rem;
+            right: 2rem;
+            transform: rotate(10deg);
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 800px;
+        }
+
+        h1 {
+            font-family: 'Bangers', cursive;
+            font-size: clamp(4rem, 12vw, 8rem);
+            color: #f5f5f5;
+            text-shadow: 
+                4px 4px 0 #ff6b35,
+                8px 8px 0 #000;
+            letter-spacing: 6px;
+            margin-bottom: 2rem;
+            transform: rotate(-2deg);
+        }
+
+        p {
+            font-size: 1.5rem;
+            color: #888;
+            margin-bottom: 1rem;
+            border-left: 4px solid #555;
+            padding-left: 1.5rem;
+            text-align: left;
+            display: inline-block;
+        }
+
+        .action-text {
+            font-family: 'Bangers', cursive;
+            font-size: 1.3rem;
+            color: #aaa;
+            letter-spacing: 2px;
+            margin-bottom: 3rem;
+            display: block;
+            border: none;
+            padding: 0;
+        }
+
+        button {
+            font-family: 'Bangers', cursive;
+            font-size: 2rem;
+            letter-spacing: 3px;
+            padding: 1.2rem 3rem;
+            background: linear-gradient(145deg, #ff6b35, #e55a2b);
+            color: #fff;
+            border: 5px solid #000;
+            cursor: pointer;
+            box-shadow: 8px 8px 0 #000;
+            transition: all 0.1s ease;
+            text-shadow: 2px 2px 0 #000;
+        }
+
+        button:hover {
+            transform: translate(4px, 4px);
+            box-shadow: 4px 4px 0 #000;
+            background: linear-gradient(145deg, #ff7b45, #ff6b35);
+        }
+
+        button:active {
+            transform: translate(8px, 8px);
+            box-shadow: none;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .stripe {
+            position: fixed;
+            height: 8px;
+            width: 100%;
+            background: repeating-linear-gradient(
+                90deg,
+                #333 0px,
+                #333 20px,
+                #ff6b35 20px,
+                #ff6b35 40px
+            );
+        }
+
+        .stripe.top { top: 0; }
+        .stripe.bottom { bottom: 0; }
+    </style>
 </head>
 <body>
-    <h1>Welcome to the Test App</h1>
-    <p>This is the base template.</p>
-    <p>Let's test out Xero OAuth integration <a href="{% url 'test_auth' %}"><button>Authorize!</button></a></p>
+    <div class="halftone"></div>
+    <div class="stripe top"></div>
+    <div class="stripe bottom"></div>
+    <span class="corner-burst top-left">ZAP!</span>
+    <span class="corner-burst bottom-right">POW!</span>
+    
+    <div class="content">
+        <h1>Welcome!</h1>
+        <p>This is the base template.</p>
+        <p class="action-text">Let's test out Xero OAuth integration</p>
+        <a href="{% url 'test_auth' %}"><button>Authorize!</button></a>
+    </div>
 </body>
 </html>
