@@ -1,26 +1,31 @@
-from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 
-from .xero_auth import make_xero_authorization_request, xero_obtain_access_token, test_xero_connections
+from .xero_auth_utils import make_xero_authorization_request, xero_obtain_access_token
 
         
 def authorization_test_view(request):
-    response = make_xero_authorization_request()
+    try:
+        response = make_xero_authorization_request()
+        
+        if response.status_code != 200:
+            return HttpResponse("Authorization request failed.", status=response.status_code)
+        
+        return HttpResponseRedirect(response.url)
     
-    if response.status_code != 200:
-        return HttpResponse("Failed to make authorization request.", status=500)
-    
-    print("Redirecting to:", response.url)
-    return HttpResponseRedirect(response.url)
+    except Exception as e:
+        return HttpResponse("This exception occurred when making authorization request:" + str(e), status=500)
     
 
 def callback(request):
     response = request.GET.dict()
-    print("Callback Response:", response)
     code = response.get("code")
     
-    try:
-        if code:
+    if not code:
+        return HttpResponse("No code received in callback.", status=400)
+    
+    if code:
+        try:
             response = xero_obtain_access_token(code)
         
             if response.status_code != 200:
@@ -31,16 +36,12 @@ def callback(request):
             expires_in = response.json().get("expires_in")
             scope = response.json().get("scope")
             
-            if token_type.lower() != "bearer":
-                return HttpResponse("Invalid token type received.", status=500)
-            
-            test_connections = test_xero_connections(access_token)
-            return test_connections
+            return HttpResponse("Access token obtained successfully.", status=200)
         
-        return HttpResponse("Callback received. You can now exchange the code for tokens.", status=200)
+        except Exception as e:
+            return HttpResponse("This exception occurred while obtaining access token: " + str(e), status=500)
+    return HttpResponse("Callback received. You can now exchange the code for tokens.", status=200)
 
-    except Exception as e:
-        return HttpResponse("Error in processing callback:" + str(e), status=500)
 
 def homepage(request):
     return render(request, 'base.html')
